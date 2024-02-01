@@ -1,2 +1,2 @@
 # summarize
-fun things with summarized texts
+fun things with summarized texts, using https://huggingface.co/pszemraj/pegasus-x-large-book-summary
