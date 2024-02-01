@@ -1,0 +1,5 @@
+ipdb
+pytest
+fastapi
+uvicorn[standard]
+transformers
