@@ -7,3 +7,4 @@ sentencepiece
 torch
 torchvision
 torchaudio
+sqlmodel

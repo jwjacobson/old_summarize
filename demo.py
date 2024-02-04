@@ -1,4 +1,5 @@
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from longtext import text as text5
 
 """
 This script is just to show that the selected summarization technology works. Next step is to try with longer texts.
@@ -212,11 +213,10 @@ laws. This tribunal is nothing less than the _Critical Investigation of
 Pure Reason_.
 """
 
-
 tokenizer = AutoTokenizer.from_pretrained("pszemraj/pegasus-x-large-book-summary")
 model = AutoModelForSeq2SeqLM.from_pretrained("pszemraj/pegasus-x-large-book-summary")
 
-inputs = tokenizer.encode(text4, return_tensors="pt", truncation=True)
+inputs = tokenizer.encode(text5, return_tensors="pt", truncation=True)
 
 summary_ids = model.generate(inputs)
 summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
