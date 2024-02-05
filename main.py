@@ -1,13 +1,12 @@
-import requests
 from typing import Union, Optional, List
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-app = FastAPI()
+from get_books import get_books 
 
-base_url = 'https://gutendex.com/books?languages=en'
+app = FastAPI()
 
 # class Book(BaseModel):
 #     title: str
@@ -43,7 +42,6 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
 
-
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
@@ -51,7 +49,19 @@ def create_db_and_tables():
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
+    populate_books()
 
+def populate_books():
+    with Session(engine) as session:
+        if session.query(Book).first() is None:
+            book_data = get_books()
+            for book in book_data:
+                new_book = Book(
+                    title=book_data[book]['title'],
+                    author=book_data[book]['author'],
+                    url=book_data[book]['url'])
+                session.add(new_book)
+            session.commit()
 
 @app.post("/books/", response_model=BookRead)
 def create_book(book: BookCreate):
