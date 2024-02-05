@@ -70,7 +70,7 @@ def create_book(book: BookCreate):
         session.add(db_book)
         session.commit()
         session.refresh(db_book)
-        return book
+        return db_book
 
 
 @app.get("/books/", response_model=List[Book])

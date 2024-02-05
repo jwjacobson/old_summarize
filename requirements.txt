@@ -143,6 +143,7 @@ regex==2023.12.25
     # via transformers
 requests==2.31.0
     # via
+    #   -r requirements.in
     #   huggingface-hub
     #   torchvision
     #   transformers
