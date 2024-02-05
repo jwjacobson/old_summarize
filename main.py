@@ -18,6 +18,7 @@ base_url = 'https://gutendex.com/books?languages=en'
 class BookBase(SQLModel):
     title: str = Field(index=True)
     author: str
+    url: str
     text: Optional[str] = Field(default=None, index=True)
     summary: Optional[str] = Field(default=None, index=True)
 
