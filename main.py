@@ -1,10 +1,12 @@
+import ipdb
 from typing import Union, Optional, List
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-from get_books import get_books 
+from get_books import get_books
+from get_text import strip_headers, get_text 
 
 app = FastAPI()
 
@@ -63,7 +65,18 @@ def populate_books():
                     author=book_data[book]['author'],
                     url=book_data[book]['url'])
                 session.add(new_book)
-            session.commit()
+        first_book = session.query(Book).first()
+        if first_book is not None and first_book.text is None:
+            books = session.exec(select(Book)).all()
+            for book in books:
+                book.text = get_text(book.url)
+        session.commit()
+
+
+
+@app.get("/")
+def root():
+    return {'Summarize': 'books'}
 
 @app.post("/books/", response_model=BookRead)
 def create_book(book: BookCreate):
@@ -95,7 +108,7 @@ def update_book(book_id: int, book: BookUpdate):
         db_book = session.get(Book, book_id)
         if not db_book:
             raise HTTPException(status_code=404, detail="Book not found")
-        book_data = book.model_dump(exclude_unset=True)
+        book_data = book.dict(exclude_unset=True)
         for key, value in book_data.items():
             setattr(db_book, key, value)
         session.add(db_book)
