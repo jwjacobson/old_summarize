@@ -3,8 +3,8 @@ The content of this module was adapted and mostly taken verbatim from the gutenb
 https://github.com/raduangelescu/gutenbergpy/blob/master/gutenbergpy/textget.py
 which was itself taken from the gutenberg project:
 https://github.com/c-w/Gutenberg
-in which strip_headers function was ported from a C++ version by Johannes Krugel which no longer appears to be available.
-I have added a line to TEXT_END_MARKERS
+in which the strip_headers function was ported from a C++ version by Johannes Krugel which no longer appears to be available.
+I have added a line to TEXT_END_MARKERS and changed the return value of strip_headers to encode the output text
 """
 
 import os
@@ -150,6 +150,8 @@ def strip_headers(text):
 
 def get_text(url):
     text_request = requests.get(url)
+    if text_request.status_code != 200:
+        raise Exception("Book not found...")
     text = text_request.content
     stripped_text = strip_headers(text)
     return stripped_text
