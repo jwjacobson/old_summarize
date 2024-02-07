@@ -1,3 +1,9 @@
+"""
+This module fetches the first page of English-language results from the Gutendex API and creates a dictionary for each book,
+in which the key is the book's ID and the value is a dictionary containing title, author, and a download link.
+Author names are converted to First Middle Last format.
+"""
+
 import requests
 
 base_url = 'https://gutendex.com/books?languages=en'
@@ -11,7 +17,7 @@ def remove_parens(author):
     """
     Remove parentheticals from an author's name, for passing back to author_parse function
     """
-    
+
     parens = {'(', ')'}  
     split_author = author.split()
 
