@@ -18,14 +18,15 @@ def remove_parens(author):
     Remove parentheticals from an author's name, for passing back to author_parse function
     """
 
-    parens = {'(', ')'}  
-    split_author = author.split()
+    # parens = {'(', ')'}  
 
-    while split_author[-1][-1] in parens or split_author[-1][0] in parens: # Remove parentheticals
-        split_author.pop()
-
-    return ' '.join(split_author)
-
+    # return " ".join([name for name in author.split() if name[0] not in parens and name[-1] not in parens])
+    author = author.split()
+    for name in author:
+        if name[0] == '(':
+            total_parens = len(author) - author.index(name)
+    return " ".join(author[:-total_parens])
+    
 def author_parse(author):
     """
     Take the author information which is stored in Last, First Middle format and convert it to First Middle Last.

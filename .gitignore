@@ -1,5 +1,5 @@
 # custom stuff
-dataprocessing/author_scratch.py
+data_processing/author_scratch.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
