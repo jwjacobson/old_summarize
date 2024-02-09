@@ -1,3 +1,4 @@
+import os
 import ipdb
 from typing import Union, Optional, List
 
@@ -9,6 +10,7 @@ from data_processing.get_books import get_books
 from data_processing.get_text import strip_headers, get_text 
 
 app = FastAPI()
+os.environ["PYTHONBREAKPOINT"] = "ipdb.set_trace"
 
 # class Book(BaseModel):
 #     title: str

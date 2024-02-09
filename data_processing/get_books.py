@@ -18,9 +18,14 @@ def remove_parens(author):
     Remove parentheticals from an author's name, for passing back to author_parse function
     """
 
-    parens = {'(', ')'}  
+    # parens = {'(', ')'}  
 
-    return " ".join([name for name in author.split() if name[0] not in parens and name[-1] not in parens])
+    # return " ".join([name for name in author.split() if name[0] not in parens and name[-1] not in parens])
+    author = author.split()
+    for name in author:
+        if name[0] == '(':
+            total_parens = len(author) - author.index(name)
+    return " ".join(author[:-total_parens])
     
 def author_parse(author):
     """
