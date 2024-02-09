@@ -5,8 +5,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-from get_books import get_books
-from get_text import strip_headers, get_text 
+from data_processing.get_books import get_books
+from data_processing.get_text import strip_headers, get_text 
 
 app = FastAPI()
 
@@ -100,6 +100,7 @@ def read_book(book_id: int):
         book = session.get(Book, book_id)
         if not book:
             raise HTTPException(status_code=404, detail="Book not found")
+        breakpoint()
         return book
 
 @app.patch("/books/{book_id}", response_model=BookRead)

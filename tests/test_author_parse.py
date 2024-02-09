@@ -7,6 +7,7 @@ authors = [
 ('Stevenson, Robert Louis', 'Robert Louis Stevenson'), # first last middle
 ('Chesterton, G. K. (Gilbert Keith)', 'G. K. Chesterton'), # parenthetical
 ('H. D. (Hilda Doolittle)', 'H. D.'), # irregular parenthetical
+('Tolkien, J. R. R. (John Ronald Reuel)', 'J. R. R. Tolkien'), # parenthetical with three initials
 ('Von Arnim, Elizabeth', 'Elizabeth Von Arnim'), # von
 ('Sanchez, Nellie Van de Grift', 'Nellie Van de Grift Sanchez'), # van
 ('Martinez de la Torre, Rafael', 'Rafael Martinez de la Torre'), # de la 1
