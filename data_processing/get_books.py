@@ -5,6 +5,7 @@ Author names are converted to First Middle Last format.
 """
 
 import requests
+import ipdb
 
 base_url = 'https://gutendex.com/books?languages=en'
 book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
@@ -49,20 +50,33 @@ def author_parse(author):
         return split_author[1].lstrip() + ' ' + split_author[0] + ' ' + split_author[2].lstrip()
 
 
-def get_books():
+def fetch_books():
     base_url = 'https://gutendex.com/books?languages=en'
     book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
     if book_request.status_code != 200:
         raise Exception("Failed to fetch books from Gutendex API")
     books = book_request.json()['results']
-    book_data = {}
-    
+    return books
+
+def process_books(books):    
     for book in books:
-        title = book.get('title', 'No title found...')
-        author = book.get('authors', 'No author found...')[0]['name']
-        author = author_parse(author)
-        urls = book.get('formats', 'No URLs found...')
-        url = urls.get('text/plain; charset=us-ascii', 'No plaintext URL found...')
+        
+        title = book.get('title')
+        if title is None:
+            title = 'No title found.'            
+
+        authors = book.get('authors')
+        if authors:
+            author = authors[0]['name']
+            author = author_parse(author)
+        else:
+            author = 'No author found.'
+
+        formats = book.get('formats')
+        if formats:
+            url = formats.get('text/plain; charset=us-ascii', 'No plaintext URL found.')
+        else:
+            url = 'No URL found.'
         
         book_data[book['id']] = {
             'title': title,
@@ -71,6 +85,3 @@ def get_books():
             }
 
     return book_data
-
-if __name__ == "__main__":
-    book_data = get_books()

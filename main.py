@@ -50,7 +50,7 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 # Uncomment this to empty the database (after schema changes etc.)
-# SQLModel.metadata.drop_all(engine)
+SQLModel.metadata.drop_all(engine)
 
 @app.on_event("startup")
 def on_startup():
