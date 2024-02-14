@@ -150,13 +150,22 @@ def strip_headers(text):
 
     return str(sep.join(out), encoding='utf-8')
 
-def get_text(url):
-    text_request = requests.get(url)
+def write_text(url, file_path):
+    text_request = requests.get(url, stream=True)
+
     if text_request.status_code != 200:
         raise Exception("Book not found...")
-    text = text_request.content
-    ipdb.set_trace()
-    stripped_text = strip_headers(text)
 
-    return stripped_text
+    with open(file_path, 'wb') as file:
+        for chunk in text_request.iter_content(chunk_size=8192):
+            stripped_chunk = strip_headers(chunk)  
+            file.write(stripped_chunk.encode('utf-8'))
 
+    # text = text_request.content
+    # ipdb.set_trace()
+    # stripped_text = strip_headers(text)
+
+    # return stripped_text
+
+
+write_text('https://www.gutenberg.org/cache/epub/72943/pg72943.txt', './test.txt')
