@@ -61,9 +61,7 @@ def fetch_books():
 def process_books(books):    
     for book in books:
         
-        title = book.get('title')
-        if title is None:
-            title = 'No title found.'            
+        title = book.get('title', 'No title found.')
 
         authors = book.get('authors')
         if authors:
