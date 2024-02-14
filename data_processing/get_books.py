@@ -36,6 +36,8 @@ def author_parse(author):
     'Shelley, Mary Wollstonecraft' -> 'Mary Wollstonecraft Shelley'
     'Von Arnim, Elizbeth' -> 'Elizbeth Von Arnim'
     """
+    if not author:
+        return ''
 
     if author[-1] == ')':
         author = remove_parens(author)
@@ -49,7 +51,23 @@ def author_parse(author):
     else:                       # Presence of more than one comma implies a suffix like "Jr."
         return split_author[1].lstrip() + ' ' + split_author[0] + ' ' + split_author[2].lstrip()
 
+def author_check(authors):
+    if not authors:
+        return 'No author found.'
+    
+    try:
+        name_dict = authors[0]
+    except KeyError:
+        print("'authors' in unexpected format (should be list)")
+        raise
 
+    try:
+        author = name_dict['name']
+    except KeyError:
+        print("No field named 'name' in authors")
+
+    return author
+    
 def fetch_books():
     base_url = 'https://gutendex.com/books?languages=en'
     book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
@@ -64,12 +82,10 @@ def process_books(books):
         title = book.get('title', 'No title found.')
 
         authors = book.get('authors')
-        if authors:
-            author = authors[0]['name']
-            author = author_parse(author)
-        else:
-            author = 'No author found.'
+        author = author_check(authors)
 
+
+       
         formats = book.get('formats')
         if formats:
             url = formats.get('text/plain; charset=us-ascii', 'No plaintext URL found.')
@@ -83,3 +99,5 @@ def process_books(books):
             }
 
     return book_data
+
+process_books(fetch_books())
