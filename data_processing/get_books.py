@@ -65,9 +65,23 @@ def author_check(authors):
         author = name_dict['name']
     except KeyError:
         print("No field named 'name' in authors")
-
+        
     return author
     
+def url_check(formats):
+    if not formats:
+        return "No URLSs found."
+    
+    try:
+        url = formats['text/plain; charset=us-ascii']
+    except KeyError:
+        print('No plaintext URL or plaintext key format has changed.')
+        raise
+
+    return url
+
+    
+
 def fetch_books():
     base_url = 'https://gutendex.com/books?languages=en'
     book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
@@ -84,13 +98,8 @@ def process_books(books):
         authors = book.get('authors')
         author = author_check(authors)
 
-
-       
         formats = book.get('formats')
-        if formats:
-            url = formats.get('text/plain; charset=us-ascii', 'No plaintext URL found.')
-        else:
-            url = 'No URL found.'
+        url = url_check(formats)
         
         book_data[book['id']] = {
             'title': title,
