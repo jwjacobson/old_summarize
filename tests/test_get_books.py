@@ -2,12 +2,45 @@ import pytest
 import requests
 from data_processing.get_books import fetch_books, process_books
 
-def test_fetch_books_happy_path():
+def test_gutendex_api():
     base_url = 'https://gutendex.com/books?languages=en'
     book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
     assert book_request.status_code == 200
     assert 'results' in book_request.json()
     assert len(book_request.json()['results']) == 32
+
+def test_fetch_books_success(mocker):
+    mock_response = mocker.Mock()
+    mock_response.json.return_value = {'results': ['book1', 'book2']}
+    mock_response.raise_for_status.return_value = None
+    mocker.patch('requests.get', return_value=mock_response)
+
+    books = fetch_books()
+    assert books == ['book1', 'book2']
+
+def test_fetch_books_http_error(mocker):
+    mocker.patch('requests.get', side_effect=requests.exceptions.HTTPError("Http Error"))
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        fetch_books()
+
+def test_fetch_books_connection_error(mocker):
+    mocker.patch('requests.get', side_effect=requests.exceptions.ConnectionError("Connection Error"))
+
+    with pytest.raises(requests.exceptions.ConnectionError):
+        fetch_books()
+
+def test_fetch_books_timeout(mocker):
+    mocker.patch('requests.get', side_effect=requests.exceptions.Timeout("Timeout Error"))
+
+    with pytest.raises(requests.exceptions.Timeout):
+        fetch_books()
+
+def test_fetch_books_request_exception(mocker):
+    mocker.patch('requests.get', side_effect=requests.exceptions.RequestException("Exotic Error"))
+
+    with pytest.raises(requests.exceptions.RequestException):
+        fetch_books()
 
 
 dummy_data = [
@@ -143,7 +176,6 @@ dummy_data = [
             }
         }
     ),
-    # TODO: test for unexpected author format
 ]
 
 
