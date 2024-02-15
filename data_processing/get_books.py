@@ -70,10 +70,10 @@ def author_check(authors):
     
 def url_check(formats):
     if not formats:
-        return "No URLSs found."
+        return "No URLs found."
     
     try:
-        url = formats['text/plain; charset=us-ascii']
+        url = formats.get('text/plain; charset=us-ascii', "No URL found.")
     except KeyError:
         print('No plaintext URL or plaintext key format has changed.')
         raise
@@ -96,7 +96,7 @@ def process_books(books):
         title = book.get('title', 'No title found.')
 
         authors = book.get('authors')
-        author = author_check(authors)
+        author = author_parse(author_check(authors))
 
         formats = book.get('formats')
         url = url_check(formats)
@@ -108,5 +108,3 @@ def process_books(books):
             }
 
     return book_data
-
-process_books(fetch_books())

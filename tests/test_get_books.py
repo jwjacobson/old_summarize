@@ -16,7 +16,7 @@ dummy_data = [
         {
             'id': 123,
             'title': 'Sample Book',
-            'authors': [{'name': 'John Doe'}],
+            'authors': [{'name': 'Doe, John'}],
             'formats': {'text/plain; charset=us-ascii': 'http://example.com'}
         },
         {
@@ -31,7 +31,7 @@ dummy_data = [
     (
         {
             'id': 123,
-            'authors': [{'name': 'John Doe'}],
+            'authors': [{'name': 'Doe, John'}],
             'formats': {'text/plain; charset=us-ascii': 'http://example.com'}
         },
         {
@@ -62,13 +62,13 @@ dummy_data = [
         {
             'id': 123,
             'title': 'Sample Book',
-            'authors': [{'name': 'John Doe'}]
+            'authors': [{'name': 'Doe, John'}]
         },
         {
             123: {
                 'title': 'Sample Book',
                 'author': 'John Doe',
-                'url': 'No URL found.'
+                'url': 'No URLs found.'
             }
         }
     ),
@@ -90,13 +90,13 @@ dummy_data = [
     (
         {
             'id': 123,
-            'authors': [{'name': 'John Doe'}],
+            'authors': [{'name': 'Doe, John'}],
         },
         {
             123: {
                 'title': 'No title found.',
                 'author': 'John Doe',
-                'url': 'No URL found.'
+                'url': 'No URLs found.'
             }
         }
     ),
@@ -110,7 +110,7 @@ dummy_data = [
             123: {
                 'title': 'Sample Book',
                 'author': 'No author found.',
-                'url': 'No URL found.'
+                'url': 'No URLs found.'
             }
         }
     ),
@@ -123,7 +123,7 @@ dummy_data = [
             123: {
                 'title': 'No title found.',
                 'author': 'No author found.',
-                'url': 'No URL found.'
+                'url': 'No URLs found.'
             }
         }
     ),
@@ -132,17 +132,18 @@ dummy_data = [
         {
             'id': 123,
             'title': 'Sample Book',
-            'authors': [{'name': 'John Doe'}],
+            'authors': [{'name': 'Doe, John'}],
             'formats': {'xxx': 'http://example.com'}
         },
         {
             123: {
                 'title': 'Sample Book',
                 'author': 'John Doe',
-                'url': 'No plaintext URL found.'
+                'url': 'No URL found.'
             }
         }
     ),
+    # TODO: test for unexpected author format
 ]
 
 
