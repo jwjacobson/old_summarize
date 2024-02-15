@@ -101,7 +101,12 @@ TEXT_END_MARKERS = frozenset((
 LEGALESE_START_MARKERS = frozenset(("<<THIS ELECTRONIC VERSION OF",))
 LEGALESE_END_MARKERS = frozenset(("SERVICE THAT CHARGES FOR DOWNLOAD",))
 
-
+def is_valid_utf8(byte_sequence):
+    try:
+        byte_sequence.decode('utf-8')
+        return True
+    except UnicodeDecodeError:
+        return False
 
 def strip_headers(text):
     lines = text.splitlines()
@@ -157,15 +162,18 @@ def write_text(url, file_path):
         raise Exception("Book not found...")
 
     with open(file_path, 'wb') as file:
+        chunks = {}
+        x = 1
         for chunk in text_request.iter_content(chunk_size=8192):
-            stripped_chunk = strip_headers(chunk)  
-            file.write(stripped_chunk.encode('utf-8'))
+            if is_valid_utf8(chunk):
+                stripped_chunk = strip_headers(chunk)
+                chunks[x] = stripped_chunk
+            else:
+                print(f'Chunk {x} invalid')
+            x += 1
+            # file.write(stripped_chunk.encode('utf-8'))
+        # ipdb.set_trace()
 
-    # text = text_request.content
-    # ipdb.set_trace()
-    # stripped_text = strip_headers(text)
-
-    # return stripped_text
 
 
-write_text('https://www.gutenberg.org/cache/epub/72943/pg72943.txt', './test.txt')
+write_text('https://www.gutenberg.org/cache/epub/2641/pg2641.txt', './test.txt')
