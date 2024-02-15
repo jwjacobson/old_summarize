@@ -163,16 +163,34 @@ def write_text(url, file_path):
 
     with open(file_path, 'wb') as file:
         chunks = {}
+        bad_chunks = {}
+        bad_x = []
         x = 1
+
         for chunk in text_request.iter_content(chunk_size=8192):
             if is_valid_utf8(chunk):
                 stripped_chunk = strip_headers(chunk)
                 chunks[x] = stripped_chunk
             else:
                 print(f'Chunk {x} invalid')
+                bad_chunks[x] = chunk
+                bad_x.append(x)
             x += 1
-            # file.write(stripped_chunk.encode('utf-8'))
-        # ipdb.set_trace()
+        if bad_chunks and len(bad_chunks)%2 == 0:
+            countdown = len(bad_x)
+            idx = 0
+            while countdown:
+                bad_chunks[bad_x[idx]] = str(bad_chunks[bad_x[idx]] + bad_chunks[bad_x[idx + 1]])
+                del bad_chunks[bad_x[idx + 1]]
+                countdown -= 2
+                idx += 2
+            all_chunks = chunks | bad_chunks
+        else:
+            raise Exception("Bad book data :(")
+
+        for key in range(1, x):
+            if all_chunks.get(key):
+                file.write(all_chunks[key].encode('utf-8'))
 
 
 
