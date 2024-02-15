@@ -51,14 +51,13 @@ def author_check(authors):
     
     try:
         name_dict = authors[0]
-    except KeyError:
-        print("'authors' in unexpected format (should be list)")
-        raise
+    except KeyError as e:
+        raise KeyError(f"'authors' in unexpected format (should be list)\nOriginal error: {e}")
 
     try:
         author = name_dict['name']
-    except KeyError:
-        print("No field named 'name' in authors")
+    except KeyError as e:
+        raise KeyError(f"No field named 'name' in authors\nOriginal error: {e}")
         
     return author
     
@@ -67,10 +66,9 @@ def url_check(formats):
         return "No URLs found."
     
     try:
-        url = formats.get('text/plain; charset=us-ascii', "No URL found.")
-    except KeyError:
-        print('No plaintext URL or plaintext key format has changed.')
-        raise
+        url = formats['text/plain; charset=us-ascii']
+    except KeyError as e:
+        raise KeyError(f"No plaintext URL or plaintext key format has changed\nOriginal error: {e}")
 
     return url
 
@@ -110,6 +108,7 @@ def process_books(books):
         author = author_parse(author_check(authors))
 
         formats = book.get('formats')
+        # ipdb.set_trace()
         url = url_check(formats)
         
         book_data[book['id']] = {
@@ -119,3 +118,5 @@ def process_books(books):
             }
 
     return book_data
+
+# process_books(fetch_books())
