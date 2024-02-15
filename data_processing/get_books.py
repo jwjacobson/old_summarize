@@ -5,14 +5,8 @@ Author names are converted to First Middle Last format.
 """
 
 import requests
+from requests.exceptions import HTTPError
 import ipdb
-
-base_url = 'https://gutendex.com/books?languages=en'
-book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
-if book_request.status_code != 200:
-    raise Exception("Failed to fetch books from Gutendex API")
-books = book_request.json()['results']
-book_data = {}
 
 def remove_parens(author):
     """
@@ -84,13 +78,30 @@ def url_check(formats):
 
 def fetch_books():
     base_url = 'https://gutendex.com/books?languages=en'
-    book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
-    if book_request.status_code != 200:
-        raise Exception("Failed to fetch books from Gutendex API")
+    
+    try:
+        book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
+        book_request.raise_for_status()
+    except requests.exceptions.HTTPError as errh:
+        print ("Http Error:",errh)
+        raise
+    except requests.exceptions.ConnectionError as errc:
+        print ("Connection error:",errc)
+        raise
+    except requests.exceptions.Timeout as errt:
+        print ("Timeout error:",errt)
+        raise
+    except requests.exceptions.RequestException as err:
+        print ("Exotic error:",err)
+        raise
+
     books = book_request.json()['results']
+
     return books
 
-def process_books(books):    
+
+def process_books(books):
+    book_data = {}
     for book in books:
         
         title = book.get('title', 'No title found.')

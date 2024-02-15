@@ -2,7 +2,7 @@ import pytest
 import requests
 from data_processing.get_books import fetch_books, process_books
 
-def test_fetch_books():
+def test_fetch_books_happy_path():
     base_url = 'https://gutendex.com/books?languages=en'
     book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
     assert book_request.status_code == 200
