@@ -216,7 +216,7 @@ Pure Reason_.
 tokenizer = AutoTokenizer.from_pretrained("pszemraj/pegasus-x-large-book-summary")
 model = AutoModelForSeq2SeqLM.from_pretrained("pszemraj/pegasus-x-large-book-summary")
 
-inputs = tokenizer.encode(text5, return_tensors="pt", truncation=True)
+inputs = tokenizer.encode(text2, return_tensors="pt", truncation=True)
 
 summary_ids = model.generate(inputs)
 summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)

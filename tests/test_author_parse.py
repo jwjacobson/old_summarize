@@ -12,7 +12,8 @@ authors = [
 ('Sanchez, Nellie Van de Grift', 'Nellie Van de Grift Sanchez'), # van
 ('Martinez de la Torre, Rafael', 'Rafael Martinez de la Torre'), # de la 1
 ('Cervantes Saavedra, Miguel de', 'Miguel de Cervantes Saavedra'), # de
-('Alger, Horatio, Jr.', 'Horatio Alger Jr.') # jr
+('Alger, Horatio, Jr.', 'Horatio Alger Jr.'), # jr
+(None, '') # none
 ]
 
 @pytest.mark.parametrize('input, expected', authors)

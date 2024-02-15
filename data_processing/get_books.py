@@ -5,14 +5,8 @@ Author names are converted to First Middle Last format.
 """
 
 import requests
+from requests.exceptions import HTTPError
 import ipdb
-
-base_url = 'https://gutendex.com/books?languages=en'
-book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
-if book_request.status_code != 200:
-    raise Exception("Failed to fetch books from Gutendex API")
-books = book_request.json()['results']
-book_data = {}
 
 def remove_parens(author):
     """
@@ -36,6 +30,8 @@ def author_parse(author):
     'Shelley, Mary Wollstonecraft' -> 'Mary Wollstonecraft Shelley'
     'Von Arnim, Elizbeth' -> 'Elizbeth Von Arnim'
     """
+    if not author:
+        return ''
 
     if author[-1] == ')':
         author = remove_parens(author)
@@ -49,32 +45,71 @@ def author_parse(author):
     else:                       # Presence of more than one comma implies a suffix like "Jr."
         return split_author[1].lstrip() + ' ' + split_author[0] + ' ' + split_author[2].lstrip()
 
+def author_check(authors):
+    if not authors:
+        return 'No author found.'
+    
+    try:
+        name_dict = authors[0]
+    except KeyError as e:
+        raise KeyError(f"'authors' in unexpected format (should be list)\nOriginal error: {e}")
+
+    try:
+        author = name_dict['name']
+    except KeyError as e:
+        raise KeyError(f"No field named 'name' in authors\nOriginal error: {e}")
+        
+    return author
+    
+def url_check(formats):
+    if not formats:
+        return "No URLs found."
+    
+    try:
+        url = formats['text/plain; charset=us-ascii']
+    except KeyError as e:
+        raise KeyError(f"No plaintext URL or plaintext key format has changed\nOriginal error: {e}")
+
+    return url
+
+    
 
 def fetch_books():
     base_url = 'https://gutendex.com/books?languages=en'
-    book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
-    if book_request.status_code != 200:
-        raise Exception("Failed to fetch books from Gutendex API")
+    
+    try:
+        book_request = requests.get(base_url, params={'q': 'requests+lang:en'})
+        book_request.raise_for_status()
+    except requests.exceptions.HTTPError as errh:
+        print ("Http Error:",errh)
+        raise
+    except requests.exceptions.ConnectionError as errc:
+        print ("Connection error:",errc)
+        raise
+    except requests.exceptions.Timeout as errt:
+        print ("Timeout error:",errt)
+        raise
+    except requests.exceptions.RequestException as err:
+        print ("Exotic error:",err)
+        raise
+
     books = book_request.json()['results']
+
     return books
 
-def process_books(books):    
+
+def process_books(books):
+    book_data = {}
     for book in books:
         
         title = book.get('title', 'No title found.')
 
         authors = book.get('authors')
-        if authors:
-            author = authors[0]['name']
-            author = author_parse(author)
-        else:
-            author = 'No author found.'
+        author = author_parse(author_check(authors))
 
         formats = book.get('formats')
-        if formats:
-            url = formats.get('text/plain; charset=us-ascii', 'No plaintext URL found.')
-        else:
-            url = 'No URL found.'
+        # ipdb.set_trace()
+        url = url_check(formats)
         
         book_data[book['id']] = {
             'title': title,
@@ -83,3 +118,5 @@ def process_books(books):
             }
 
     return book_data
+
+# process_books(fetch_books())

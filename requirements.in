@@ -9,3 +9,5 @@ torchvision
 torchaudio
 sqlmodel
 requests
+coverage
+pytest-mock

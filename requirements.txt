@@ -18,6 +18,8 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via uvicorn
+coverage==7.4.1
+    # via -r requirements.in
 decorator==5.1.1
     # via
     #   ipdb
@@ -131,6 +133,10 @@ pydantic-core==2.16.1
 pygments==2.17.2
     # via ipython
 pytest==8.0.0
+    # via
+    #   -r requirements.in
+    #   pytest-mock
+pytest-mock==3.12.0
     # via -r requirements.in
 python-dotenv==1.0.1
     # via uvicorn
