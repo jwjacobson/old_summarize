@@ -192,6 +192,4 @@ def write_text(url, file_path):
             if all_chunks.get(key):
                 file.write(all_chunks[key].encode('utf-8'))
 
-
-
 write_text('https://www.gutenberg.org/cache/epub/2641/pg2641.txt', './test.txt')
