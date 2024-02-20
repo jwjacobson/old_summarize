@@ -12,3 +12,4 @@ requests
 coverage
 pytest-mock
 ruff
+pre-commit
