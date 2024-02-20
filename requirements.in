@@ -11,3 +11,4 @@ sqlmodel
 requests
 coverage
 pytest-mock
+ruff

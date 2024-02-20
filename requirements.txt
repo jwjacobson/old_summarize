@@ -153,6 +153,8 @@ requests==2.31.0
     #   huggingface-hub
     #   torchvision
     #   transformers
+ruff==0.2.2
+    # via -r requirements.in
 safetensors==0.4.2
     # via transformers
 sentencepiece==0.1.99
