@@ -9,6 +9,7 @@ I have added a line to TEXT_END_MARKERS and changed the return value of strip_he
 
 import os
 import requests
+import ipdb
 
 
 TEXT_START_MARKERS = frozenset(
@@ -161,8 +162,10 @@ def strip_headers(text):
     return str(sep.join(out), encoding="utf-8")
 
 
-def write_text(url, file_path):
+def write_text_to_file(url, file_path):
     text_request = requests.get(url, stream=True)
+
+    ipdb.set_trace()
 
     if text_request.status_code != 200:
         raise Exception("Book not found...")
@@ -182,6 +185,7 @@ def write_text(url, file_path):
                 bad_chunks[idx] = chunk
                 bad_idx.append(idx)
             idx += 1
+        # ipdb.set_trace()
         if bad_chunks and len(bad_chunks) % 2 == 0:
             countdown = len(bad_idx)
             idx = 0
@@ -192,13 +196,55 @@ def write_text(url, file_path):
                 del bad_chunks[bad_idx[idx + 1]]
                 countdown -= 2
                 idx += 2
-            all_chunks = chunks | bad_chunks
-        else:
+            chunks = chunks | bad_chunks
+        elif bad_chunks:
             raise Exception("Bad book data :(")
 
         for key in range(1, idx):
-            if all_chunks.get(key):
-                file.write(all_chunks[key].encode("utf-8"))
+            if chunks.get(key):
+                file.write(chunks[key].encode("utf-8"))
+
+    return file_path
 
 
-write_text("https://www.gutenberg.org/cache/epub/2641/pg2641.txt", "./test.txt")
+# write_text_to_file("https://gutenberg.org/cache/epub/84/pg84.txt", "./test.txt")
+
+
+def write_text_to_book(url):
+    text_request = requests.get(url, stream=True)
+
+    if text_request.status_code != 200:
+        raise Exception("Book not found...")
+
+    chunks = {}
+    bad_chunks = {}
+    bad_idx = []
+    bad_flag = False
+    idx = 1
+
+    for chunk in text_request.iter_content(chunk_size=8192):
+        if is_valid_utf8(chunk):
+            stripped_chunk = strip_headers(chunk)
+            chunks[idx] = stripped_chunk
+        else:
+            if not bad_flag:
+                print("Bad chunks detected.")
+                bad_flag = True
+            bad_chunks[idx] = chunk
+            bad_idx.append(idx)
+        idx += 1
+    # ipdb.set_trace()
+    if bad_chunks and len(bad_chunks) % 2 == 0:
+        print("Attempting bad chunk repair.")
+        countdown = len(bad_idx)
+        idx = 0
+        while countdown:
+            bad_chunks[bad_idx[idx]] = str(bad_chunks[bad_idx[idx]] + bad_chunks[bad_idx[idx + 1]])
+            del bad_chunks[bad_idx[idx + 1]]
+            countdown -= 2
+            idx += 2
+        chunks = chunks | bad_chunks
+    elif bad_chunks:
+        print("Chunks irreparable. The text may contain gaps.")
+
+    return chunks

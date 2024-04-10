@@ -3,9 +3,10 @@ from typing import Optional, List
 
 from fastapi import FastAPI, HTTPException
 from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlalchemy import JSON
 
-from data_processing.get_books import get_books
-from data_processing.get_text import get_text
+from data_processing.get_books import fetch_books, process_books
+from data_processing.get_text import write_text_to_book
 
 app = FastAPI()
 os.environ["PYTHONBREAKPOINT"] = "ipdb.set_trace"
@@ -21,7 +22,7 @@ class BookBase(SQLModel):
     title: str = Field(index=True)
     author: str
     url: str
-    text: Optional[str] = Field(default=None, index=True)
+    text: Optional[dict] = Field(sa_type=JSON)
     summary: Optional[str] = Field(default=None, index=True)
 
 
@@ -56,7 +57,7 @@ def create_db_and_tables():
 
 
 # Uncomment this to empty the database (after schema changes etc.)
-SQLModel.metadata.drop_all(engine)
+# SQLModel.metadata.drop_all(engine)
 
 
 @app.on_event("startup")
@@ -68,7 +69,7 @@ def on_startup():
 def populate_books():
     with Session(engine) as session:
         if session.query(Book).first() is None:
-            book_data = get_books()
+            book_data = process_books(fetch_books())
             for book in book_data:
                 new_book = Book(
                     title=book_data[book]["title"],
@@ -79,8 +80,15 @@ def populate_books():
         first_book = session.query(Book).first()
         if first_book is not None and first_book.text is None:
             books = session.exec(select(Book)).all()
+            # Process for saving each book to its own file
+            # for book in books:
+            #     filename = f"./books/{book.id}_{book.title.replace(' ', '_')}.txt"
+            #     book.text = write_text_to_file(book.url, filename)
+
             for book in books:
-                book.text = get_text(book.url)
+                print(f"Getting text for {book.title}.")
+                book.text = write_text_to_book(book.url)
+
         session.commit()
 
 
