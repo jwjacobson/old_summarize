@@ -1,5 +1,4 @@
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-from longtext import text as text5
 
 """
 This script is just to show that the selected summarization technology works. Next step is to try with longer texts.
@@ -45,7 +44,7 @@ doctrine.
 """
 
 # The opening of Milton's Paradise Lost
-text2="""
+text2 = """
 Of Man’s first disobedience, and the fruit
 Of that forbidden tree whose mortal taste
 Brought death into the World, and all our woe,
